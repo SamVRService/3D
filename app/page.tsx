@@ -1,37 +1,32 @@
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(75,320/240,1,500);
-camera.position.set( 0,2,2 );
-camera.lookAt( scene.position );
-var lightIntensity = 1;
-var lightDistance = 10;
-var light = new THREE.AmbientLight( 0xFFFFFF, lightIntensity, lightDistance );
-light.position.set( 0, 5, 0 );
-scene.add( light );
-var grid = new THREE.GridHelper(10,10);
-scene.add( grid );
-var renderer = new THREE.WebGLRenderer({});
-renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( 320,240 );
-renderer.domElement.style.margin = '0 auto';
-renderer.domElement.style.display = 'block';
-renderer.domElement.style.backgroundColor = '#dddddd';
-$(document.body).append(renderer.domElement);
-function update(){
-  renderer.render( scene, camera );
-  requestAnimationFrame( update );
+import * as THREE from 'three';
+
+const width = window.innerWidth, height = window.innerHeight;
+
+// init
+
+const camera = new THREE.PerspectiveCamera( 70, width / height, 0.01, 10 );
+camera.position.z = 1;
+
+const scene = new THREE.Scene();
+
+const geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
+const material = new THREE.MeshNormalMaterial();
+
+const mesh = new THREE.Mesh( geometry, material );
+scene.add( mesh );
+
+const renderer = new THREE.WebGLRenderer( { antialias: true } );
+renderer.setSize( width, height );
+renderer.setAnimationLoop( animation );
+document.body.appendChild( renderer.domElement );
+
+// animation
+
+function animation( time ) {
+
+	mesh.rotation.x = time / 2000;
+	mesh.rotation.y = time / 1000;
+
+	renderer.render( scene, camera );
+
 }
-update();
-mtl_loader = new THREE.MTLLoader();
-mtl_loader.load("assets/doughnut.mtl",
-    function(materials) {
-        materials.preload()
-            var obj_loader = new THREE.OBJLoader();
-            obj_loader.setMaterials(materials)
-            obj_loader.load("assets/doughnut.obj",
-            function(object) {
-                let mesh = object.children[0]
-                scene.add(mesh);
-            }, null, function(error) {alert(error)}
-        )
-    }, null, function(error) {alert(error)}
-);
